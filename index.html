@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpriteSeparator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>SpriteSeparator</h1>
+  <input type="file" id="imageLoader" accept="image/png" />
+  <input type="number" id="frameCount" placeholder="Numero di frame" min="1">
+  <button id="extractButton">Estrai Frame</button>
+  <div id="output"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>
