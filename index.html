@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,16 +8,104 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="logo.png" />
 </head>
+
 <body>
-  <h1>SpriteSeparator</h1>
-  <input type="file" id="imageLoader" accept="image/png" />
-  <input type="number" id="frameCount" placeholder="Numero di frame" min="1">
-  <button id="extractButton">Estrai Frame</button>
-  <div id="output"></div>
+  <div class="app">
+    <div class="header">
+      <div>
+        <h1>SpriteSeparator</h1>
+        <p class="subtitle">Extract frames and animations from sprite sheets</p>
+      </div>
+    </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <div class="upload-zone" id="uploadZone">
+      <i class="ti ti-photo-up" aria-hidden="true"></i>
+      <p id="uploadLabel">Drop a PNG sprite sheet or click to browse</p>
+      <input type="file" id="fileInput" accept="image/png,image/gif,image/webp" />
+    </div>
 
+    <div class="preview-box" id="previewBox" style="display:none">
+      <img id="spritePreview" alt="Sprite sheet preview" />
+    </div>
+
+    <div class="config">
+      <div class="config-title">Extraction mode</div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="single" id="modeSingle">
+          <i class="ti ti-layout-columns" aria-hidden="true"></i> Single row
+        </button>
+        <button class="mode-btn" data-mode="multi" id="modeMulti">
+          <i class="ti ti-layout-rows" aria-hidden="true"></i> Multiple animations
+        </button>
+        <button class="mode-btn" data-mode="auto" id="modeAuto">
+          <i class="ti ti-scan" aria-hidden="true"></i> Auto-detect
+        </button>
+      </div>
+
+      <div id="singleConfig">
+        <div class="field">
+          <label for="frameCount">Frames per row</label>
+          <input type="number" id="frameCount" placeholder="e.g. 8" min="1" />
+        </div>
+      </div>
+
+      <div id="multiConfig" style="display:none">
+        <p class="config-hint">Define each animation row. Each row can have a different frame count.</p>
+        <div class="row-fields">
+          <div class="field">
+            <label for="newRowName">Animation name</label>
+            <input type="text" id="newRowName" placeholder="e.g. walk" />
+          </div>
+          <div class="field">
+            <label for="newRowFrames">Frame count</label>
+            <input type="number" id="newRowFrames" placeholder="e.g. 8" min="1" />
+          </div>
+        </div>
+        <button class="add-row-btn" id="addRowBtn">
+          <i class="ti ti-plus" aria-hidden="true"></i> Add animation row
+        </button>
+        <div class="row-list" id="rowList"></div>
+      </div>
+
+      <div id="autoConfig" style="display:none">
+        <p class="config-hint">Automatically detects each sprite by finding groups of non-white pixels. Works best with white or transparent backgrounds.</p>
+        <div class="row-fields">
+          <div class="field">
+            <label for="autoPadding">Padding (px)</label>
+            <input type="number" id="autoPadding" placeholder="0" min="0" value="2" />
+          </div>
+          <div class="field">
+            <label for="autoMinSize">Min sprite size (px)</label>
+            <input type="number" id="autoMinSize" placeholder="4" min="1" value="8" />
+          </div>
+        </div>
+        <div class="auto-info">
+          <i class="ti ti-info-circle" aria-hidden="true"></i>
+          <span><strong>Padding</strong> adds extra space around each sprite. <strong>Min size</strong> filters out stray pixels smaller than this threshold.</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="extract-btn" id="extractBtn">
+      <i class="ti ti-download" aria-hidden="true"></i> Extract frames
+    </button>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">Processing...</div>
+    </div>
+
+    <div class="output-section" id="outputSection" style="display:none">
+      <div class="output-title">Preview</div>
+      <div id="output"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>
