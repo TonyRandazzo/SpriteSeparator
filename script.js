@@ -17,7 +17,7 @@ const output = document.getElementById('output');
 const rowList = document.getElementById('rowList');
 
 uploadZone.addEventListener('click', () => fileInput.click());
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.background = 'var(--color-background-secondary)'; });
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.background = '#1a1a1a'; });
 uploadZone.addEventListener('dragleave', () => { uploadZone.style.background = ''; });
 uploadZone.addEventListener('drop', e => { e.preventDefault(); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
 fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
@@ -45,7 +45,7 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
 document.getElementById('addRowBtn').addEventListener('click', () => {
   const name = document.getElementById('newRowName').value.trim();
   const frames = parseInt(document.getElementById('newRowFrames').value, 10);
-  if (!name || isNaN(frames) || frames < 1) { alert('Inserisci un nome e un numero di frame valido.'); return; }
+  if (!name || isNaN(frames) || frames < 1) { alert('Enter a name and a valid frame count.'); return; }
   const id = rowIdCounter++;
   animRows.push({ id, name, frames });
   document.getElementById('newRowName').value = '';
@@ -53,15 +53,41 @@ document.getElementById('addRowBtn').addEventListener('click', () => {
   renderRowList();
 });
 
+function icon(name, extraStyle) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'ti');
+  svg.setAttribute('aria-hidden', 'true');
+  if (extraStyle) svg.style.cssText = extraStyle;
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttribute('href', '#i-' + name);
+  svg.appendChild(use);
+  return svg;
+}
+
 function renderRowList() {
   rowList.innerHTML = '';
   animRows.forEach((row) => {
     const div = document.createElement('div');
     div.className = 'row-item';
-    div.innerHTML = `<i class="ti ti-grip-vertical" style="color:var(--color-text-tertiary)" aria-hidden="true"></i>
-      <span class="row-label">${row.name}</span>
-      <span class="row-tag">${row.frames} frames</span>
-      <button aria-label="Rimuovi riga" onclick="removeRow(${row.id})"><i class="ti ti-x" aria-hidden="true"></i></button>`;
+
+    div.appendChild(icon('grip-vertical', 'color:#555'));
+
+    const label = document.createElement('span');
+    label.className = 'row-label';
+    label.textContent = row.name;
+    div.appendChild(label);
+
+    const tag = document.createElement('span');
+    tag.className = 'row-tag';
+    tag.textContent = `${row.frames} frames`;
+    div.appendChild(tag);
+
+    const btn = document.createElement('button');
+    btn.setAttribute('aria-label', `Remove row ${row.name}`);
+    btn.appendChild(icon('x'));
+    btn.addEventListener('click', () => removeRow(row.id));
+    div.appendChild(btn);
+
     rowList.appendChild(div);
   });
 }
@@ -73,14 +99,14 @@ function removeRow(id) {
 
 extractBtn.addEventListener('click', async () => {
   const file = currentFile;
-  if (!file) { alert('Carica prima uno spritesheet.'); return; }
+  if (!file) { alert('Load a sprite sheet first.'); return; }
 
   if (currentMode === 'single') {
     const fc = parseInt(document.getElementById('frameCount').value, 10);
-    if (isNaN(fc) || fc < 1) { alert('Inserisci un numero di frame valido.'); return; }
+    if (isNaN(fc) || fc < 1) { alert('Enter a valid frame count.'); return; }
     await extractSingle(file, fc);
   } else if (currentMode === 'multi') {
-    if (animRows.length === 0) { alert('Aggiungi almeno una riga animazione.'); return; }
+    if (animRows.length === 0) { alert('Add at least one animation row.'); return; }
     await extractMulti(file, animRows);
   } else if (currentMode === 'auto') {
     const padding = parseInt(document.getElementById('autoPadding').value, 10) || 0;
@@ -113,7 +139,7 @@ async function extractSingle(file, frameCount) {
   const zip = new JSZip();
   const fw = img.width / frameCount;
   const fh = img.height;
-  setProgress(0, 'Estrazione frame…');
+  setProgress(0, 'Extracting frames…');
   const group = document.createElement('div');
   group.className = 'anim-group';
   const grid = document.createElement('div');
@@ -138,7 +164,7 @@ async function extractSingle(file, frameCount) {
 
   await saveZip(zip, 'frames.zip');
   extractBtn.disabled = false;
-  progressLabel.textContent = 'Fatto! Download in corso…';
+  progressLabel.textContent = 'Done! Downloading…';
 }
 
 
@@ -163,7 +189,24 @@ async function extractMulti(file, rows) {
 
     const group = document.createElement('div');
     group.className = 'anim-group';
-    group.innerHTML = `<div class="anim-group-header"><i class="ti ti-folder" aria-hidden="true"></i> ${folderName} <span style="color:var(--color-text-tertiary);font-weight:400">(${row.name})</span><span class="row-tag" style="margin-left:auto">${row.frames} frames</span></div>`;
+
+    const header = document.createElement('div');
+    header.className = 'anim-group-header';
+    header.appendChild(icon('folder'));
+    header.appendChild(document.createTextNode(' ' + folderName + ' '));
+
+    const nameSpan = document.createElement('span');
+    nameSpan.style.cssText = 'color:#555;font-weight:400';
+    nameSpan.textContent = `(${row.name})`;
+    header.appendChild(nameSpan);
+
+    const countTag = document.createElement('span');
+    countTag.className = 'row-tag';
+    countTag.style.marginLeft = 'auto';
+    countTag.textContent = `${row.frames} frames`;
+    header.appendChild(countTag);
+
+    group.appendChild(header);
     const grid = document.createElement('div');
     grid.className = 'frame-grid';
     group.appendChild(grid);
@@ -181,13 +224,13 @@ async function extractMulti(file, rows) {
         await blobToZip(folder, tc, `${i}.png`);
       }
       done++;
-      setProgress(Math.round((done / total) * 100), `Animazione ${ri + 1}/${rows.length} — frame ${i + 1}/${row.frames}`);
+      setProgress(Math.round((done / total) * 100), `Animation ${ri + 1}/${rows.length} — frame ${i + 1}/${row.frames}`);
     }
   }
 
   await saveZip(zip, 'animations.zip');
   extractBtn.disabled = false;
-  progressLabel.textContent = 'Fatto! Download in corso…';
+  progressLabel.textContent = 'Done! Downloading…';
 }
 
 
@@ -195,7 +238,7 @@ async function extractAuto(file, padding, minSize) {
   extractBtn.disabled = true;
   output.innerHTML = '';
   outputSection.style.display = 'none';
-  setProgress(0, 'Analisi immagine…');
+  setProgress(0, 'Analysing image…');
 
   const img = await loadImage(file);
   const w = img.width, h = img.height;
@@ -207,7 +250,7 @@ async function extractAuto(file, padding, minSize) {
   const imgData = srcCtx.getImageData(0, 0, w, h);
   const px = imgData.data;
 
-  setProgress(5, 'Rilevamento pixel…');
+  setProgress(5, 'Detecting pixels…');
 
   const fg = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) {
@@ -217,7 +260,7 @@ async function extractAuto(file, padding, minSize) {
     fg[i] = 1;
   }
 
-  setProgress(15, 'Connessione componenti…');
+  setProgress(15, 'Labelling connected components…');
 
   const label = new Int32Array(w * h).fill(-1);
   const parent = [];
@@ -254,7 +297,7 @@ async function extractAuto(file, padding, minSize) {
     }
   }
 
-  setProgress(40, 'Calcolo bounding box…');
+  setProgress(40, 'Computing bounding boxes…');
 
   const boxes = new Map();
   for (let y = 0; y < h; y++) {
@@ -274,7 +317,7 @@ async function extractAuto(file, padding, minSize) {
     }
   }
 
-  setProgress(55, 'Fusione componenti vicini…');
+  setProgress(55, 'Merging nearby components…');
 
   const mergeGap = Math.max(padding + 2, 6);
   let rects = Array.from(boxes.values()).filter(b => {
@@ -319,14 +362,25 @@ async function extractAuto(file, padding, minSize) {
     return rowA !== rowB ? rowA - rowB : a.minX - b.minX;
   });
 
-  setProgress(70, `Trovati ${rects.length} sprite, estrazione…`);
+  setProgress(70, `Found ${rects.length} sprites, extracting…`);
 
   const zip = new JSZip();
   outputSection.style.display = 'block';
 
   const group = document.createElement('div');
   group.className = 'anim-group';
-  group.innerHTML = `<div class="anim-group-header"><i class="ti ti-scan" aria-hidden="true"></i> Auto-detected <span class="row-tag" style="margin-left:auto">${rects.length} sprites</span></div>`;
+
+  const header = document.createElement('div');
+  header.className = 'anim-group-header';
+  header.appendChild(icon('scan'));
+  header.appendChild(document.createTextNode(' Auto-detected '));
+  const countTag = document.createElement('span');
+  countTag.className = 'row-tag';
+  countTag.style.marginLeft = 'auto';
+  countTag.textContent = `${rects.length} sprites`;
+  header.appendChild(countTag);
+  group.appendChild(header);
+
   const grid = document.createElement('div');
   grid.className = 'frame-grid';
   group.appendChild(grid);
@@ -347,14 +401,14 @@ async function extractAuto(file, padding, minSize) {
     await blobToZip(zip, fc, `${i}.png`);
 
     if (i % 5 === 0) {
-      setProgress(70 + Math.round((i / rects.length) * 28), `Estrazione sprite ${i + 1}/${rects.length}…`);
+      setProgress(70 + Math.round((i / rects.length) * 28), `Extracting sprite ${i + 1}/${rects.length}…`);
       await new Promise(r => setTimeout(r, 0));
     }
   }
 
   await saveZip(zip, 'sprites.zip');
   extractBtn.disabled = false;
-  setProgress(100, `Fatto! ${rects.length} sprite estratti.`);
+  setProgress(100, `Done! ${rects.length} sprites extracted.`);
 }
 
 

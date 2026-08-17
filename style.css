@@ -1,5 +1,3 @@
-@import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css');
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -23,6 +21,23 @@ body {
 .app {
   max-width: 680px;
   margin: 0 auto;
+}
+
+/* ── Icons (inline SVG, sized via font-size like the old icon font) ── */
+.ti {
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+}
+
+a {
+  color: #5badf0;
 }
 
 /* ── Header ── */
@@ -53,7 +68,7 @@ body {
   flex-shrink: 0;
 }
 
-.logo i {
+.logo .ti {
   font-size: 22px;
   color: #5badf0;
 }
@@ -68,6 +83,26 @@ h1 {
   font-size: 13px;
   color: #888;
   margin-top: 2px;
+}
+
+/* ── Privacy badge ── */
+.privacy-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #101a12;
+  border: 0.5px solid #1f3a26;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 12px;
+  color: #7fbf92;
+  line-height: 1.45;
+  margin-bottom: 1rem;
+}
+
+.privacy-badge .ti {
+  font-size: 15px;
+  color: #6dbf86;
 }
 
 /* ── Upload zone ── */
@@ -86,7 +121,7 @@ h1 {
   .upload-zone {
     padding: 1.25rem 1rem;
   }
-  .upload-zone i {
+  .upload-zone .ti {
     font-size: 26px !important;
   }
 }
@@ -96,11 +131,11 @@ h1 {
   border-color: #444;
 }
 
-.upload-zone i {
+.upload-zone .ti {
   font-size: 32px;
   color: #555;
   display: block;
-  margin-bottom: 8px;
+  margin: 0 auto 8px;
 }
 
 .upload-zone p {
@@ -118,7 +153,7 @@ h1 {
   font-weight: 500;
 }
 
-.upload-zone.has-file i {
+.upload-zone.has-file .ti {
   color: #5badf0;
 }
 
@@ -210,7 +245,7 @@ h1 {
   white-space: nowrap;
 }
 
-.mode-btn i {
+.mode-btn .ti {
   font-size: 15px;
 }
 
@@ -358,7 +393,7 @@ h1 {
   margin-top: 4px;
 }
 
-.auto-info i {
+.auto-info .ti {
   font-size: 16px;
   flex-shrink: 0;
   margin-top: 1px;
@@ -460,7 +495,7 @@ h1 {
   flex-wrap: wrap;
 }
 
-.anim-group-header i {
+.anim-group-header .ti {
   font-size: 15px;
   color: #5badf0;
 }
@@ -488,4 +523,126 @@ canvas.frame-thumb {
   border-radius: 4px;
   border: 0.5px solid #2e2e2e;
   image-rendering: pixelated;
+}
+
+/* ── Footer ── */
+.site-footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 0.5px solid #222;
+  text-align: center;
+  font-size: 12px;
+  color: #555;
+}
+
+.site-footer p {
+  margin-bottom: 4px;
+}
+
+.site-footer a {
+  color: #777;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: #5badf0;
+  text-decoration: underline;
+}
+
+.site-footer span {
+  margin: 0 6px;
+  color: #333;
+}
+
+.footer-note {
+  color: #444;
+}
+
+/* ── Legal pages (privacy.html) ── */
+.doc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #b8b8b8;
+}
+
+.doc .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #777;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+}
+
+.doc .back-link:hover {
+  color: #5badf0;
+}
+
+.doc h2 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin: 2rem 0 0.5rem;
+}
+
+.doc h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ddd;
+  margin: 1.25rem 0 0.35rem;
+}
+
+.doc p,
+.doc ul {
+  margin-bottom: 0.75rem;
+}
+
+.doc ul {
+  padding-left: 1.25rem;
+}
+
+.doc li {
+  margin-bottom: 0.3rem;
+}
+
+.doc strong {
+  color: #e8e8e8;
+}
+
+.doc .updated {
+  font-size: 12px;
+  color: #666;
+}
+
+.doc .lang-divider {
+  margin: 2.5rem 0 0;
+  padding-top: 1.5rem;
+  border-top: 0.5px solid #222;
+}
+
+.doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 0.75rem;
+}
+
+.doc th,
+.doc td {
+  text-align: left;
+  padding: 7px 10px;
+  border: 0.5px solid #2a2a2a;
+  vertical-align: top;
+}
+
+.doc th {
+  background: #161616;
+  color: #ddd;
+  font-weight: 600;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-bottom: 0.75rem;
 }
